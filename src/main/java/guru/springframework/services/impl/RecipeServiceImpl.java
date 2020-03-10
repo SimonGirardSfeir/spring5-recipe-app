@@ -46,14 +46,27 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeCommand saveRecipeCommand(RecipeCommand command) {
         Recipe detachedRecipe = recipeCommandToRecipe.convert(command);
 
-        Recipe savedRecipe = recipeRepository.save(detachedRecipe);
-        log.debug("Saved Recipe: "+savedRecipe.getId());
-        return recipeToRecipeCommand.convert(savedRecipe);
+        Recipe savedRecipe = null;
+        if (detachedRecipe != null) {
+            savedRecipe = recipeRepository.save(detachedRecipe);
+        }
+        if (savedRecipe != null) {
+            log.debug("Saved Recipe: "+savedRecipe.getId());
+            return recipeToRecipeCommand.convert(savedRecipe);
+        } else {
+            return null;
+        }
     }
 
     @Override
     @Transactional
     public RecipeCommand findCommandById(Long id) {
         return recipeToRecipeCommand.convert(findById(id));
+    }
+
+    @Override
+    @Transactional
+    public void deleteByID(Long id) {
+        recipeRepository.deleteById(id);
     }
 }

@@ -70,4 +70,12 @@ public class RecipeServiceImplTest {
         assertNotNull(recipeReturned);
         verify(recipeRepository).findById(1L);
     }
+
+    @Test
+    public void deleteById() {
+        Long idToDelete = 2L;
+        recipeService.deleteByID(idToDelete);
+
+        verify(recipeRepository).deleteById(idToDelete);
+    }
 }
