@@ -1,6 +1,8 @@
 package guru.springframework.controllers;
 
 import guru.springframework.commands.IngredientCommand;
+import guru.springframework.commands.RecipeCommand;
+import guru.springframework.commands.UnitOfMeasureCommand;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
@@ -43,6 +45,28 @@ public class IngredientController {
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(Long.parseLong(idR), Long.parseLong(idI)));
 
         return "recipe/ingredient/show";
+    }
+
+    @GetMapping
+    @RequestMapping("recipe/{idR}/ingredient/new")
+    public String newIngredient(@PathVariable String idR, Model model) {
+
+        //Make sure we have a good ID value
+        RecipeCommand recipeCommand = recipeService.findCommandById(Long.parseLong(idR));
+        //TODO raise exception if null
+
+        //Need to return back parent id for hidden form property
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(Long.parseLong(idR));
+
+        model.addAttribute("ingredient", ingredientCommand);
+
+        //Init UOM
+        ingredientCommand.setUnitOfMeasure(new UnitOfMeasureCommand());
+
+        model.addAttribute("unitOfMeasureList", unitOfMeasureService.listAllUnitOfMeasures());
+
+        return "recipe/ingredient/ingredientform";
     }
 
     @GetMapping
