@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
@@ -29,8 +28,7 @@ public class IngredientController {
         this.unitOfMeasureService = unitOfMeasureService;
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{id}/ingredients")
+    @GetMapping("recipe/{id}/ingredients")
     public String getIngredients(@PathVariable String id, Model model) {
         log.debug("Getting ingredient list for recipe id: "+id);
         model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
@@ -38,8 +36,7 @@ public class IngredientController {
         return "recipe/ingredient/list";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{idR}/ingredient/{idI}/show")
+    @GetMapping("recipe/{idR}/ingredient/{idI}/show")
     public String showIngredient(@PathVariable String idR, @PathVariable String idI, Model model) {
         log.debug("Show ingredient of id: " + idI);
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(Long.parseLong(idR), Long.parseLong(idI)));
@@ -47,8 +44,7 @@ public class IngredientController {
         return "recipe/ingredient/show";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{idR}/ingredient/new")
+    @GetMapping("recipe/{idR}/ingredient/new")
     public String newIngredient(@PathVariable String idR, Model model) {
 
         //Make sure we have a good ID value
@@ -69,8 +65,7 @@ public class IngredientController {
         return "recipe/ingredient/ingredientform";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{idR}/ingredient/{idI}/update")
+    @GetMapping("recipe/{idR}/ingredient/{idI}/update")
     public String updateRecipeIngredient(@PathVariable String idR, @PathVariable String idI, Model model) {
 
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(Long.parseLong(idR), Long.parseLong(idI)));
@@ -91,8 +86,7 @@ public class IngredientController {
         return "redirect:/recipe/"+ savedCommand.getRecipeId() + "/ingredient/" + savedCommand.getId() + "/show";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{recipeId}/ingredient/{ingredientId}/delete")
+    @GetMapping("recipe/{recipeId}/ingredient/{ingredientId}/delete")
     public String deleteIngredient(@PathVariable String recipeId, @PathVariable String ingredientId) {
 
         log.debug("Deleting ingredient id: "+ingredientId);
