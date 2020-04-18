@@ -5,6 +5,7 @@ import guru.springframework.converters.IngredientCommandToIngredient;
 import guru.springframework.converters.IngredientToIngredientCommand;
 import guru.springframework.domain.Ingredient;
 import guru.springframework.domain.Recipe;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.repositories.UnitOfMeasureRepository;
 import guru.springframework.services.IngredientService;
@@ -36,6 +37,7 @@ public class IngredientServiceImpl implements IngredientService {
 
         if(!recipeOptional.isPresent()) {
             log.error("Recipe id not found. ID: "+recipeId);
+            throw new NotFoundException("Recipe Not Found. Id value: " + recipeId);
         }
 
         Recipe recipe = recipeOptional.get();
@@ -47,6 +49,7 @@ public class IngredientServiceImpl implements IngredientService {
 
         if(!ingredientCommandOptional.isPresent()) {
             log.error("Ingredient id is not found. ID: "+ingredientId);
+            throw new NotFoundException("Ingredient Not Found. Id value: " + ingredientId);
         }
 
         return ingredientCommandOptional.get();
@@ -73,7 +76,7 @@ public class IngredientServiceImpl implements IngredientService {
                 ingredientFound.setAmount(command.getAmount());
                 ingredientFound.setUnitOfMeasure(unitOfMeasureRepository
                                                     .findById(command.getUnitOfMeasure().getId())
-                                                    .orElseThrow(() -> new RuntimeException("Unit Of Measure Not Found")));
+                                                    .orElseThrow(() -> new NotFoundException("Unit Of Measure Not Found")));
             } else {
                 Ingredient ingredient = ingredientCommandToIngredient.convert(command);
                 ingredient.setRecipe(recipe);

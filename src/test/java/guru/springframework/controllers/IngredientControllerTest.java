@@ -2,6 +2,7 @@ package guru.springframework.controllers;
 
 import guru.springframework.commands.IngredientCommand;
 import guru.springframework.commands.RecipeCommand;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
@@ -45,7 +46,7 @@ public class IngredientControllerTest {
         MockitoAnnotations.initMocks(this);
 
         controller = new IngredientController(recipeService, ingredientService, unitOfMeasureService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new ControllerExceptionHandler()).build();
     }
 
     @Test
@@ -80,6 +81,17 @@ public class IngredientControllerTest {
     }
 
     @Test
+    public void testShowIngredientIngredientNotFound() throws Exception {
+        //When
+        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong())).thenThrow(NotFoundException.class);
+
+        //Then
+        mockMvc.perform(get("/recipe/1/ingredient/2/show"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
+    }
+
+    @Test
     public void testNewIngredientForm() throws Exception {
         //Given
         RecipeCommand recipeCommand = new RecipeCommand();
@@ -97,6 +109,19 @@ public class IngredientControllerTest {
                 .andExpect(model().attributeExists("unitOfMeasureList"));
 
         verify(recipeService).findCommandById(1L);
+    }
+
+    @Test
+    public void testNewIngredientFormRecipeNotFound() throws Exception {
+
+        //When
+        when(recipeService.findCommandById(anyLong())).thenThrow(NotFoundException.class);
+        when(unitOfMeasureService.listAllUnitOfMeasures()).thenReturn(new HashSet<>());
+
+        //Then
+        mockMvc.perform(get("/recipe/1/ingredient/new"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
     }
 
     @Test

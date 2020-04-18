@@ -49,7 +49,6 @@ public class IngredientController {
 
         //Make sure we have a good ID value
         RecipeCommand recipeCommand = recipeService.findCommandById(Long.parseLong(idR));
-        //TODO raise exception if null
 
         //Need to return back parent id for hidden form property
         IngredientCommand ingredientCommand = new IngredientCommand();
